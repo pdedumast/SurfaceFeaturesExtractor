@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Sampling</category>
+  <title>Condyles Features Creator</title>
+  <description> xxx </description>
+  <version>1.0</version>
+  <contributor>Priscille de Dumast (UofM)</contributor>
+  <acknowledgements> blablabla </acknowledgements>
+    <parameters>
+      <label>I/O</label>
+
+      <geometry>
+          <name>inputSurface</name>
+          <label>Input surface</label>
+          <longflag>input</longflag>
+          <description>Input surface</description>
+      </geometry>
+
+      <geometry>
+          <name>outputSurface</name>
+          <label>Output surface</label>
+          <longflag>output</longflag>
+          <description>Output surface</description>
+      </geometry>
+
+<!--         <integer>
+            <name>nbLandmarks</name>
+            <flag>N</flag>
+            <description>Number of landmarks </description>
+            <label>Number of landmarks</label>
+            <default>5</default>
+      </integer> -->     
+    </parameters>
+</executable>
