@@ -10,25 +10,25 @@
       <label>I/O</label>
 
       <geometry>
-          <name>inputSurface</name>
-          <label>Input surface</label>
-          <longflag>input</longflag>
-          <description>Input surface</description>
+        <name>inputSurface</name>
+        <label>Input surface</label>
+        <longflag>input</longflag>
+        <description>Input surface</description>
       </geometry>
 
       <geometry>
-          <name>outputSurface</name>
-          <label>Output surface</label>
-          <longflag>output</longflag>
-          <description>Output surface</description>
+        <name>outputSurface</name>
+        <label>Output surface</label>
+        <longflag>output</longflag>
+        <description>Output surface</description>
       </geometry>
 
-<!--         <integer>
-            <name>nbLandmarks</name>
-            <flag>N</flag>
-            <description>Number of landmarks </description>
-            <label>Number of landmarks</label>
-            <default>5</default>
-      </integer> -->     
+      <directory>
+        <name>meanGroupDir</name>
+        <label>Mean group directory</label>
+        <longflag>meanGroup</longflag>
+        <description>Mean group directory</description>
+      </directory>
+    
     </parameters>
 </executable>

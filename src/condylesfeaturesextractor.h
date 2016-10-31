@@ -4,9 +4,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkPolyDataNormals.h>
-// #include <vtkPolyDataReader.h>
-// #include <vtkPolyDataWriter.h>
-#include <fstream>
+#include <vtkPointData.h>
+#include <vtkFloatArray.h>
 #include "condylesfileIO.h"
 
 
@@ -17,15 +16,21 @@ public:
     vtkTypeMacro(CondylesFeaturesExtractor,vtkPolyDataAlgorithm);
     static CondylesFeaturesExtractor *New(); 
 
-    /** Set the inputs data of the filter */
-    void SetInput(std::string input);
+    /** Function SetInput(std::string input, std::vector<std::string> list)
+    * Set the inputs data of the filter
+    * @param input : input shape
+    * @param list : list of group mean shapes
+    */
+    void SetInput(std::string input, std::vector<std::string> list);
 
-    // Update the filter and process the output
+    /** Function Update()
+     * Update the filter and process the output
+     */
     void Update();
 
     /**
      * Return the output of the Filter
-     * @return       output of the Filter
+     * @return : output of the Filter CondylesFeaturesExtractor
      */
     vtkSmartPointer<vtkPolyData> GetOutput();
 
@@ -35,18 +40,29 @@ private:
     vtkSmartPointer<vtkPolyData> outputSurface;
 
     vtkSmartPointer<vtkPolyData> intermediateSurface;
+    std::vector<std::string> listMeanFiles;
 
-    /**
+    /** Function init_output()
      * Initialize outputSurface
      */
     void init_output();
 
-    /**
-     * Compute normals
+    /** Function compute_normals()
+     * Compute normals of the input surface
      */
     void compute_normals();
 
+    /** Function compute_positions()
+     * Compute position of each point of the shape
+     */
+    void compute_positions();
 
+    /** Function compute_distances()
+     * Compute distance to each mean group model
+     */
+    void compute_distances();
+
+    
 
 
 
