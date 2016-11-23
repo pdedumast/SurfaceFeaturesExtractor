@@ -41,7 +41,7 @@ void CondylesFeaturesExtractor::init_output()
  */
 void CondylesFeaturesExtractor::compute_normals()
 {
-	puts("Function compute_normals");
+	puts(" :: Function compute_normals");
 	vtkSmartPointer<vtkPolyDataNormals> NormalFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
 	NormalFilter->SetInputData(this->inputSurface);
 
@@ -56,14 +56,13 @@ void CondylesFeaturesExtractor::compute_normals()
  */
 void CondylesFeaturesExtractor::compute_positions()
 {
+	std::cout<<" :: Function compute_positions"<<std::endl;
 
     std::string name = "position";
     int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
 	vtkFloatArray* position = vtkFloatArray::New();
 	position->SetNumberOfComponents(3);
-
-	std::cout<<"---Computing Scalar "<<name<<std::endl;
 	position->SetName(name.c_str());
 
 	for(int i=0; i<nbPoints; i++)
@@ -84,14 +83,45 @@ void CondylesFeaturesExtractor::compute_positions()
  */
 void CondylesFeaturesExtractor::compute_distances()
 {
-	std::cout<<"Function compute_distances"<<std::endl;
-	int nbCells = this->inputSurface->GetNumberOfCells();
+	std::cout<<" :: Function compute_distances"<<std::endl;
 
-	if(nbCells <= 0)		// Pas de surface ds le vtkfile
-		throw itk::ExceptionObject("Empty input fiber");
+	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
-	std::vector<std::string>::iterator it = this->listMeanFiles.begin(), it_end = this->listMeanFiles.end();
-	for (; it != it_end; it++) {}
+	// Load each mean groupe shape & create labels
+	std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
+	std::vector<std::string> meanDistLabels;
+	for (int k=0; k<this->listMeanFiles.size(); k++) 
+	{
+		vtkSmartPointer<vtkPolyData> meanShape = vtkSmartPointer<vtkPolyData>::New();
+		meanShape = readVTKFile( this->listMeanFiles[k].c_str() );
+		meanShapesList.push_back(meanShape);
+
+		std::string k_char = static_cast<std::ostringstream*>( &( std::ostringstream() << k) )->str();
+		meanDistLabels.push_back("distanceGroup"+k_char);
+	}
+
+	for(int k=0; k<meanShapesList.size(); k++)
+	{
+		vtkSmartPointer<vtkFloatArray> meanDistance = vtkFloatArray::New() ;
+		meanDistance->SetName(meanDistLabels[k].c_str());
+
+		for (int i=0; i<nbPoints; i++) 
+		{
+			double* p1 = new double[3];
+			p1 = this->intermediateSurface->GetPoint(i);
+			
+			double* p2 = new double[3];
+			p2 = meanShapesList[k]->GetPoint(i);
+
+			double dist = sqrt( (p1[0]-p2[0])*(p1[0]-p2[0]) + (p1[1]-p2[1])*(p1[1]-p2[1]) + (p1[2]-p2[2])*(p1[2]-p2[2]) );
+			meanDistance->InsertNextTuple1(dist);
+
+			this->intermediateSurface->GetPointData()->SetActiveScalars(meanDistLabels[k].c_str());
+			this->intermediateSurface->GetPointData()->SetScalars(meanDistance);
+		}
+	}
+
+
 }
 
 /**
@@ -110,8 +140,8 @@ void CondylesFeaturesExtractor::Update()
 	puts("Positions computed");
 
 	// Compute distance to each mean groups
-	// this->compute_distances();
-	// puts("Distances computed");
+	this->compute_distances();
+	puts("Distances computed");
 	
 	this->outputSurface = this->intermediateSurface;
 }
