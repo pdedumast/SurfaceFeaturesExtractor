@@ -86,6 +86,7 @@ void CondylesFeaturesExtractor::compute_distances()
 	std::cout<<" :: Function compute_distances"<<std::endl;
 
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
+	std::cout<<"Surf - nb pts : "<<nbPoints<<std::endl;
 
 	// Load each mean groupe shape & create labels
 	std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
@@ -98,14 +99,16 @@ void CondylesFeaturesExtractor::compute_distances()
 
 		std::string k_char = static_cast<std::ostringstream*>( &( std::ostringstream() << k) )->str();
 		meanDistLabels.push_back("distanceGroup"+k_char);
-	}
 
+		// std::cout<<"mean k = "<<k<<" - nb pts : "<<meanShapesList[k]->GetNumberOfPoints()<<std::endl;
+	}
+	int trouve = 0;
 	for(int k=0; k<meanShapesList.size(); k++)
 	{
 		vtkSmartPointer<vtkFloatArray> meanDistance = vtkFloatArray::New() ;
 		meanDistance->SetName(meanDistLabels[k].c_str());
 
-		for (int i=0; i<nbPoints; i++) 
+		for (int i=0; i<nbPoints; i++)
 		{
 			double* p1 = new double[3];
 			p1 = this->intermediateSurface->GetPoint(i);
@@ -114,6 +117,17 @@ void CondylesFeaturesExtractor::compute_distances()
 			p2 = meanShapesList[k]->GetPoint(i);
 
 			double dist = sqrt( (p1[0]-p2[0])*(p1[0]-p2[0]) + (p1[1]-p2[1])*(p1[1]-p2[1]) + (p1[2]-p2[2])*(p1[2]-p2[2]) );
+			
+			if (i>=1002)	// 1002 = nb de vertices sur un min
+				dist = 0;
+
+			// if (dist>10)
+			// {
+				// dist = 10;
+				// std::cout<<" p1 : "<<p1[0]<<" "<<p1[1]<<" "<<p1[2]<<std::endl;
+				// std::cout<<" mean p2 : "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<std::endl;
+				// std::cout<<"dist : "<<dist<<std::endl; 
+			// }
 			meanDistance->InsertNextTuple1(dist);
 
 			this->intermediateSurface->GetPointData()->SetActiveScalars(meanDistLabels[k].c_str());
