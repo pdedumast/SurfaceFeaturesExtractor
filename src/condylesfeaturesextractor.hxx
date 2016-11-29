@@ -121,21 +121,61 @@ void CondylesFeaturesExtractor::compute_distances()
 			if (i>=1002)	// 1002 = nb de vertices sur un min
 				dist = 0;
 
-			// if (dist>10)
-			// {
-				// dist = 10;
-				// std::cout<<" p1 : "<<p1[0]<<" "<<p1[1]<<" "<<p1[2]<<std::endl;
-				// std::cout<<" mean p2 : "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<std::endl;
-				// std::cout<<"dist : "<<dist<<std::endl; 
-			// }
 			meanDistance->InsertNextTuple1(dist);
 
 			this->intermediateSurface->GetPointData()->SetActiveScalars(meanDistLabels[k].c_str());
 			this->intermediateSurface->GetPointData()->SetScalars(meanDistance);
 		}
 	}
+}
 
 
+void CondylesFeaturesExtractor::compute_maxcurvatures()
+{
+	std::cout<<" :: Function compute_curvatures"<<std::endl;
+
+	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+
+	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
+	curvaturesFilter->SetCurvatureTypeToMaximum();
+	curvaturesFilter->Update();
+
+	this->intermediateSurface = curvaturesFilter->GetOutput();
+}
+void CondylesFeaturesExtractor::compute_mincurvatures()
+{
+	std::cout<<" :: Function compute_curvatures"<<std::endl;
+
+	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+
+	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
+	curvaturesFilter->SetCurvatureTypeToMinimum();
+	curvaturesFilter->Update();
+
+	this->intermediateSurface = curvaturesFilter->GetOutput();
+}
+void CondylesFeaturesExtractor::compute_gaussiancurvatures()
+{
+	std::cout<<" :: Function compute_gaussiancurvatures"<<std::endl;
+
+	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+
+	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
+	curvaturesFilter->SetCurvatureTypeToGaussian();
+	curvaturesFilter->Update();
+
+	this->intermediateSurface = curvaturesFilter->GetOutput();
+}
+void CondylesFeaturesExtractor::compute_meancurvatures()
+{
+	std::cout<<" :: Function compute_meancurvatures"<<std::endl;
+	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+
+	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
+	curvaturesFilter->SetCurvatureTypeToMean();
+	curvaturesFilter->Update();
+
+	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
 
 /**
@@ -156,7 +196,20 @@ void CondylesFeaturesExtractor::Update()
 	// Compute distance to each mean groups
 	this->compute_distances();
 	puts("Distances computed");
-	
+
+	// Compute curvatures at each point
+	this->compute_maxcurvatures();
+	puts("Curvatures max computed");
+
+	this->compute_mincurvatures();
+	puts("Curvatures min computed");
+
+	this->compute_gaussiancurvatures();
+	puts("Curvatures gaussian computed");
+
+	this->compute_meancurvatures();
+	puts("Curvatures mean computed");
+
 	this->outputSurface = this->intermediateSurface;
 }
 

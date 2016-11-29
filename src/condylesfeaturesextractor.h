@@ -6,6 +6,8 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkPointData.h>
 #include <vtkFloatArray.h>
+#include <vtkCurvatures.h>
+
 #include "condylesfileIO.h"
 
 
@@ -61,6 +63,14 @@ private:
      * Compute distance to each mean group model
      */
     void compute_distances();
+
+    /** Function compute_curvatures()
+     * Compute surface curvature at each point
+     */
+    void compute_maxcurvatures();
+    void compute_mincurvatures();
+    void compute_gaussiancurvatures();
+    void compute_meancurvatures();
 
     
 
