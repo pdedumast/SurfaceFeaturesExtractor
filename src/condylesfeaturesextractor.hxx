@@ -33,6 +33,7 @@ void CondylesFeaturesExtractor::SetInput(std::string input, std::vector<std::str
  */
 void CondylesFeaturesExtractor::init_output()
 {
+	this->intermediateSurface = this->inputSurface;
 	this->outputSurface = this->inputSurface;
 }
 
@@ -41,12 +42,18 @@ void CondylesFeaturesExtractor::init_output()
  */
 void CondylesFeaturesExtractor::compute_normals()
 {
-	puts(" :: Function compute_normals");
+	// puts(" :: Function compute_normals");
 	vtkSmartPointer<vtkPolyDataNormals> NormalFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
-	NormalFilter->SetInputData(this->inputSurface);
+	NormalFilter->SetInputData(this->intermediateSurface);
+
+	NormalFilter->ComputePointNormalsOn();
+    NormalFilter->ComputeCellNormalsOff();
+    NormalFilter->SetFlipNormals(0);
+    NormalFilter->SplittingOff();
+	NormalFilter->FlipNormalsOff();
+	NormalFilter->ConsistencyOff();
 
 	NormalFilter->Update();
-
 	this->intermediateSurface = NormalFilter->GetOutput();
 
 }
@@ -56,7 +63,7 @@ void CondylesFeaturesExtractor::compute_normals()
  */
 void CondylesFeaturesExtractor::compute_positions()
 {
-	std::cout<<" :: Function compute_positions"<<std::endl;
+	// std::cout<<" :: Function compute_positions"<<std::endl;
 
     std::string name = "position";
     int nbPoints = this->intermediateSurface->GetNumberOfPoints();
@@ -83,10 +90,10 @@ void CondylesFeaturesExtractor::compute_positions()
  */
 void CondylesFeaturesExtractor::compute_distances()
 {
-	std::cout<<" :: Function compute_distances"<<std::endl;
+	// std::cout<<" :: Function compute_distances"<<std::endl;
 
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
-	std::cout<<"Surf - nb pts : "<<nbPoints<<std::endl;
+	// std::cout<<"Surf - nb pts : "<<nbPoints<<std::endl;
 
 	// Load each mean groupe shape & create labels
 	std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
@@ -132,7 +139,7 @@ void CondylesFeaturesExtractor::compute_distances()
 
 void CondylesFeaturesExtractor::compute_maxcurvatures()
 {
-	std::cout<<" :: Function compute_curvatures"<<std::endl;
+	// std::cout<<" :: Function compute_curvatures"<<std::endl;
 
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -144,7 +151,7 @@ void CondylesFeaturesExtractor::compute_maxcurvatures()
 }
 void CondylesFeaturesExtractor::compute_mincurvatures()
 {
-	std::cout<<" :: Function compute_curvatures"<<std::endl;
+	// std::cout<<" :: Function compute_curvatures"<<std::endl;
 
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -156,7 +163,7 @@ void CondylesFeaturesExtractor::compute_mincurvatures()
 }
 void CondylesFeaturesExtractor::compute_gaussiancurvatures()
 {
-	std::cout<<" :: Function compute_gaussiancurvatures"<<std::endl;
+	// std::cout<<" :: Function compute_gaussiancurvatures"<<std::endl;
 
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -168,7 +175,7 @@ void CondylesFeaturesExtractor::compute_gaussiancurvatures()
 }
 void CondylesFeaturesExtractor::compute_meancurvatures()
 {
-	std::cout<<" :: Function compute_meancurvatures"<<std::endl;
+	// std::cout<<" :: Function compute_meancurvatures"<<std::endl;
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
@@ -187,28 +194,28 @@ void CondylesFeaturesExtractor::Update()
 
 	// Compute normal for each vertex
 	this->compute_normals();
-	puts("Normals computed");
+	// puts("Normals computed");
 
 	// Compute position of each point
 	this->compute_positions();
-	puts("Positions computed");
+	// puts("Positions computed");
 
 	// Compute distance to each mean groups
 	this->compute_distances();
-	puts("Distances computed");
+	// puts("Distances computed");
 
 	// Compute curvatures at each point
 	this->compute_maxcurvatures();
-	puts("Curvatures max computed");
+	// puts("Curvatures max computed");
 
 	this->compute_mincurvatures();
-	puts("Curvatures min computed");
+	// puts("Curvatures min computed");
 
 	this->compute_gaussiancurvatures();
-	puts("Curvatures gaussian computed");
+	// puts("Curvatures gaussian computed");
 
 	this->compute_meancurvatures();
-	puts("Curvatures mean computed");
+	// puts("Curvatures mean computed");
 
 	this->outputSurface = this->intermediateSurface;
 }
