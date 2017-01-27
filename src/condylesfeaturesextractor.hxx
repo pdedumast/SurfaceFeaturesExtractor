@@ -93,7 +93,6 @@ void CondylesFeaturesExtractor::compute_distances()
 	// std::cout<<" :: Function compute_distances"<<std::endl;
 
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
-	// std::cout<<"Surf - nb pts : "<<nbPoints<<std::endl;
 
 	// Load each mean groupe shape & create labels
 	std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
@@ -106,8 +105,6 @@ void CondylesFeaturesExtractor::compute_distances()
 
 		std::string k_char = static_cast<std::ostringstream*>( &( std::ostringstream() << k) )->str();
 		meanDistLabels.push_back("distanceGroup"+k_char);
-
-		// std::cout<<"mean k = "<<k<<" - nb pts : "<<meanShapesList[k]->GetNumberOfPoints()<<std::endl;
 	}
 	int trouve = 0;
 	for(int k=0; k<meanShapesList.size(); k++)
@@ -137,7 +134,7 @@ void CondylesFeaturesExtractor::compute_distances()
 }
 
 
-void CondylesFeaturesExtractor::compute_maxcurvatures()
+void CondylesFeaturesExtractor::compute_maxcurvatures()		// Kappa2
 {
 	// std::cout<<" :: Function compute_curvatures"<<std::endl;
 
@@ -149,7 +146,7 @@ void CondylesFeaturesExtractor::compute_maxcurvatures()
 
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
-void CondylesFeaturesExtractor::compute_mincurvatures()
+void CondylesFeaturesExtractor::compute_mincurvatures()		// Kappa1
 {
 	// std::cout<<" :: Function compute_curvatures"<<std::endl;
 
@@ -159,9 +156,9 @@ void CondylesFeaturesExtractor::compute_mincurvatures()
 	curvaturesFilter->SetCurvatureTypeToMinimum();
 	curvaturesFilter->Update();
 
-	this->intermediateSurface = curvaturesFilter->GetOutput();
+	this->intermediateSurface = curvaturesFilter->GetOutput();	
 }
-void CondylesFeaturesExtractor::compute_gaussiancurvatures()
+void CondylesFeaturesExtractor::compute_gaussiancurvatures()	// G
 {
 	// std::cout<<" :: Function compute_gaussiancurvatures"<<std::endl;
 
@@ -173,7 +170,7 @@ void CondylesFeaturesExtractor::compute_gaussiancurvatures()
 
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
-void CondylesFeaturesExtractor::compute_meancurvatures()
+void CondylesFeaturesExtractor::compute_meancurvatures()		// H
 {
 	// std::cout<<" :: Function compute_meancurvatures"<<std::endl;
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
@@ -184,6 +181,18 @@ void CondylesFeaturesExtractor::compute_meancurvatures()
 
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
+
+// void CondylesFeaturesExtractor::compute_shapeindex()			// S
+// {
+// 	// std::cout<<" :: Function compute_shapeindex"<<std::endl;
+// 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+
+// 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
+// 	curvaturesFilter->SetCurvatureTypeToMean();
+// 	curvaturesFilter->Update();
+
+// 	this->intermediateSurface = curvaturesFilter->GetOutput();
+// }
 
 /**
  * Function Update()

@@ -16,7 +16,7 @@ int main (int argc, char *argv[])
 
     if (argc < 3)
     {
-        cout << "Usage: " << argv[0] << " --input" << " [input surface name]" << " --output" << " [output surface name]" << " --meanGroup" << " [mean shapes directory]" << endl;
+        cout << "Usage: " << argv[0] << " --input" << " [input surface name <std::string>]" << " --output" << " [output surface name <std::string>]" << " --meanGroup" << " [mean shapes directory <std::vector<std::string>>]" << endl;
         return EXIT_FAILURE;
     }
     // Check input shape
@@ -31,12 +31,12 @@ int main (int argc, char *argv[])
         std::cerr << "Wrong Output File Format, must be a .vtk file" << std::endl;
         return EXIT_FAILURE;
     }
-
+        
     // Get list of group mean shapes
     std::vector<std::string> listMeanFiles;
-    if (!meanGroupDir.empty())
-        getListFile(meanGroupDir, listMeanFiles, "vtk");
-
+    // if (!meanGroupDir.empty())
+        // getListFile(meanGroupDir, listMeanFiles, "vtk");
+    listMeanFiles = meanGroupDir;
     // **********
 	Filter->SetInput(inputSurface.c_str(), listMeanFiles);
 	Filter->Update();
