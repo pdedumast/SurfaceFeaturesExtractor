@@ -1,5 +1,8 @@
 #include "condylesfeaturesextractor.h"
 
+#if !defined(M_PI)
+#define M_PI 3.14159265358979323846264338327950288   /* pi */
+#endif
 
 
 vtkStandardNewMacro(CondylesFeaturesExtractor);
@@ -63,7 +66,7 @@ void CondylesFeaturesExtractor::compute_normals()
  */
 void CondylesFeaturesExtractor::compute_positions()
 {
-    std::string name = "position";
+    std::string name = "Position";
     int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
 	vtkFloatArray* position = vtkFloatArray::New();
@@ -197,6 +200,33 @@ void CondylesFeaturesExtractor::compute_shapeindex()			// S
 		this->intermediateSurface->GetPointData()->SetActiveScalars("Shape_Index");
 		this->intermediateSurface->GetPointData()->SetScalars(shapeIndexArray);
 	}
+}
+
+void CondylesFeaturesExtractor::compute_curvedness()			// S
+{
+	// std::cout<<" :: Function compute_curvedness"<<std::endl;
+
+	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
+
+	vtkSmartPointer<vtkFloatArray> curvednessArray = vtkFloatArray::New() ;
+
+	vtkDataArray* minCurvArray = this->intermediateSurface->GetPointData()->GetScalars("Minimum_Curvature");
+	vtkDataArray* maxCurvArray = this->intermediateSurface->GetPointData()->GetScalars("Maximum_Curvature");
+
+	curvednessArray->SetName("Curvedness");
+
+	for (int i=0; i<nbPoints; i++)
+	{
+		double k1 = minCurvArray->GetTuple1(i);
+		double k2 = maxCurvArray->GetTuple1(i);
+		
+		double value = (2 / M_PI) * (atan( (k2 + k1) / (k2 - k1) ) );
+
+		curvednessArray->InsertNextTuple1(value);
+
+		this->intermediateSurface->GetPointData()->SetActiveScalars("Curvedness");
+		this->intermediateSurface->GetPointData()->SetScalars(curvednessArray);
+	}
 
 }
 
@@ -226,6 +256,8 @@ void CondylesFeaturesExtractor::Update()
 	this->compute_meancurvatures();
 	
 	this->compute_shapeindex();
+
+	this->compute_curvedness();
 
 	this->outputSurface = this->intermediateSurface;
 }

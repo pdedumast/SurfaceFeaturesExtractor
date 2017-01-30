@@ -73,7 +73,7 @@ private:
     void compute_meancurvatures();
 
     void compute_shapeindex();
-
+    void compute_curvedness();
     
 
 
