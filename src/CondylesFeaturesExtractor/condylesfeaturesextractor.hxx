@@ -63,8 +63,6 @@ void CondylesFeaturesExtractor::compute_normals()
  */
 void CondylesFeaturesExtractor::compute_positions()
 {
-	// std::cout<<" :: Function compute_positions"<<std::endl;
-
     std::string name = "position";
     int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
@@ -90,8 +88,6 @@ void CondylesFeaturesExtractor::compute_positions()
  */
 void CondylesFeaturesExtractor::compute_distances()
 {
-	// std::cout<<" :: Function compute_distances"<<std::endl;
-
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
 	// Load each mean groupe shape & create labels
@@ -123,7 +119,8 @@ void CondylesFeaturesExtractor::compute_distances()
 			double dist = sqrt( (p1[0]-p2[0])*(p1[0]-p2[0]) + (p1[1]-p2[1])*(p1[1]-p2[1]) + (p1[2]-p2[2])*(p1[2]-p2[2]) );
 			
 			if (i>=1002)	// 1002 = nb de vertices sur un min
-				dist = 0;
+				dist = 0;			// a changeeer
+
 
 			meanDistance->InsertNextTuple1(dist);
 
@@ -136,8 +133,6 @@ void CondylesFeaturesExtractor::compute_distances()
 
 void CondylesFeaturesExtractor::compute_maxcurvatures()		// Kappa2
 {
-	// std::cout<<" :: Function compute_curvatures"<<std::endl;
-
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
@@ -148,8 +143,6 @@ void CondylesFeaturesExtractor::compute_maxcurvatures()		// Kappa2
 }
 void CondylesFeaturesExtractor::compute_mincurvatures()		// Kappa1
 {
-	// std::cout<<" :: Function compute_curvatures"<<std::endl;
-
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
@@ -160,8 +153,6 @@ void CondylesFeaturesExtractor::compute_mincurvatures()		// Kappa1
 }
 void CondylesFeaturesExtractor::compute_gaussiancurvatures()	// G
 {
-	// std::cout<<" :: Function compute_gaussiancurvatures"<<std::endl;
-
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
@@ -172,7 +163,6 @@ void CondylesFeaturesExtractor::compute_gaussiancurvatures()	// G
 }
 void CondylesFeaturesExtractor::compute_meancurvatures()		// H
 {
-	// std::cout<<" :: Function compute_meancurvatures"<<std::endl;
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
@@ -182,17 +172,33 @@ void CondylesFeaturesExtractor::compute_meancurvatures()		// H
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
 
-// void CondylesFeaturesExtractor::compute_shapeindex()			// S
-// {
-// 	// std::cout<<" :: Function compute_shapeindex"<<std::endl;
-// 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+void CondylesFeaturesExtractor::compute_shapeindex()			// S
+{
+	// std::cout<<" :: Function compute_shapeindex"<<std::endl;
 
-// 	curvaturesFilter->SetInputDataObject(this->intermediateSurface);
-// 	curvaturesFilter->SetCurvatureTypeToMean();
-// 	curvaturesFilter->Update();
+	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
-// 	this->intermediateSurface = curvaturesFilter->GetOutput();
-// }
+	vtkSmartPointer<vtkFloatArray> shapeIndexArray = vtkFloatArray::New() ;
+
+	vtkDataArray* minCurvArray = this->intermediateSurface->GetPointData()->GetScalars("Minimum_Curvature");
+	vtkDataArray* maxCurvArray = this->intermediateSurface->GetPointData()->GetScalars("Maximum_Curvature");
+
+	shapeIndexArray->SetName("Shape_Index");
+
+	for (int i=0; i<nbPoints; i++)
+	{
+		double k1 = minCurvArray->GetTuple1(i);
+		double k2 = maxCurvArray->GetTuple1(i);
+		
+		double value = sqrt( (pow(k1, 2) + pow(k2, 2) ) / 2);
+
+		shapeIndexArray->InsertNextTuple1(value);
+
+		this->intermediateSurface->GetPointData()->SetActiveScalars("Shape_Index");
+		this->intermediateSurface->GetPointData()->SetScalars(shapeIndexArray);
+	}
+
+}
 
 /**
  * Function Update()
@@ -203,28 +209,23 @@ void CondylesFeaturesExtractor::Update()
 
 	// Compute normal for each vertex
 	this->compute_normals();
-	// puts("Normals computed");
 
 	// Compute position of each point
 	this->compute_positions();
-	// puts("Positions computed");
 
 	// Compute distance to each mean groups
 	this->compute_distances();
-	// puts("Distances computed");
 
 	// Compute curvatures at each point
 	this->compute_maxcurvatures();
-	// puts("Curvatures max computed");
 
 	this->compute_mincurvatures();
-	// puts("Curvatures min computed");
 
 	this->compute_gaussiancurvatures();
-	// puts("Curvatures gaussian computed");
 
 	this->compute_meancurvatures();
-	// puts("Curvatures mean computed");
+	
+	this->compute_shapeindex();
 
 	this->outputSurface = this->intermediateSurface;
 }

@@ -72,6 +72,8 @@ private:
     void compute_gaussiancurvatures();
     void compute_meancurvatures();
 
+    void compute_shapeindex();
+
     
 
 
