@@ -2,6 +2,8 @@
 #include "condylesfileIO.hxx"
 #include "condylesfeaturesextractorCLP.h"
 
+#include "argio.hh"
+
 #include <dirent.h>
 #include <iterator>
 
@@ -12,35 +14,18 @@ int main (int argc, char *argv[])
 {
 	PARSE_ARGS;
 
+    const char** argv_const = const_cast<const char**>(argv);
+    
     vtkSmartPointer<CondylesFeaturesExtractor> Filter = vtkSmartPointer<CondylesFeaturesExtractor>::New();
 
-    if (argc < 3)
-    {
-        cout << "Usage: " << argv[0] << " --input" << " [input surface name <std::string>]" << " --output" << " [output surface name <std::string>]" << " --meanGroup" << " [mean shapes directory <std::vector<std::string>>]" << endl;
-        return EXIT_FAILURE;
-    }
-    // Check input shape
-    if(inputSurface.rfind(".vtk")==std::string::npos || inputSurface.empty())
-    {
-        std::cerr << "Wrong Input File Format, must be a .vtk or .vtp file" << std::endl;
-        return EXIT_FAILURE;
-    }
-    // Check output file
-    if(outputSurface.rfind(".vtk")==std::string::npos || outputSurface.empty())
-    {
-        std::cerr << "Wrong Output File Format, must be a .vtk file" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-
-    vtkSmartPointer<vtkPolyData> inputShape = readVTKFile(inputSurface.c_str());
+    vtkSmartPointer<vtkPolyData> inputShape = readVTKFile(inputMesh.c_str());
     int num_points = inputShape->GetNumberOfPoints();
 
     // Get list of group mean shapes
     std::vector<std::string> listMeanFiles;
     // if (!meanGroupDir.empty())
         // getListFile(meanGroupDir, listMeanFiles, "vtk");
-    listMeanFiles = meanGroupDir;
+    listMeanFiles = distMesh;
 
     // Load each mean groupe shape & create labels
     std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
@@ -62,7 +47,7 @@ int main (int argc, char *argv[])
     // **********
 	Filter->SetInput(inputShape, meanShapesList);
 	Filter->Update();
-    writeVTKFile(outputSurface.c_str(),Filter->GetOutput());
+    writeVTKFile(outputMesh.c_str(),Filter->GetOutput());
 
 	return EXIT_SUCCESS;
 }

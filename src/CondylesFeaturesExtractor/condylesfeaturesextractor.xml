@@ -2,33 +2,48 @@
 <executable>
   <category>Shape Analysis</category>
   <title>Condyles Features Creator</title>
-  <description> Specific features are computed at each point of the 3D Model </description>
+  <description> Specific features are computed at each point of the 3D Model add added to the vtk file</description>
   <version>1.0</version>
   <contributor>Priscille de Dumast (University of Michigan)</contributor>
   <acknowledgements>  </acknowledgements>
+    
     <parameters>
-      <label>I/O</label>
+      <label>IO</label>
+      <description>Input/output parameters</description>
 
       <geometry fileExtensions=".vtk" multiple="false">
-        <name>inputSurface</name>
-        <label>Input surface</label>
-        <longflag>input</longflag>
-        <description>Input surface</description>
+        <name>inputMesh</name>
+        <label>Input Mesh</label>
+        <channel>input</channel>
+        <index>0</index>
+        <description>Input Mesh</description>
       </geometry>
 
       <geometry fileExtensions=".vtk" multiple="false">
-        <name>outputSurface</name>
-        <label>Output surface</label>
-        <longflag>output</longflag>
-        <description>Output surface</description>
+        <name>outputMesh</name>
+        <label>Output Mesh</label>
+        <channel>input</channel>
+        <index>1</index>
+        <description>Output Mesh</description>
       </geometry>
+    </parameters>
+
+
+    <parameters advanced="true">
+      <boolean>
+        <name>distMeshOn</name>
+        <default>false</default>
+        <label>Compute the distances to a list of mesh</label>
+        <longflag>distMeshOn</longflag>
+        <description>Compute the distances to a list of mesh</description> 
+      </boolean>
 
       <geometry fileExtensions=".vtk" multiple="true">
-        <name>meanGroupDir</name>
-        <label>Mean group directory</label>
-        <longflag>meanGroup</longflag>
-        <description>Mean group directory</description>
+        <name>distMesh</name>
+        <label>List of mesh to compute distances</label>
+        <longflag>distMesh</longflag>
+        <channel>input</channel>
+        <description>List of mesh to compute distances</description>
       </geometry>
-    
     </parameters>
 </executable>
