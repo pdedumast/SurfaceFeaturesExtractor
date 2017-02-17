@@ -31,14 +31,36 @@ int main (int argc, char *argv[])
         std::cerr << "Wrong Output File Format, must be a .vtk file" << std::endl;
         return EXIT_FAILURE;
     }
-        
+
+
+    vtkSmartPointer<vtkPolyData> inputShape = readVTKFile(inputSurface.c_str());
+    int num_points = inputShape->GetNumberOfPoints();
+
     // Get list of group mean shapes
     std::vector<std::string> listMeanFiles;
     // if (!meanGroupDir.empty())
         // getListFile(meanGroupDir, listMeanFiles, "vtk");
     listMeanFiles = meanGroupDir;
+
+    // Load each mean groupe shape & create labels
+    std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
+    std::vector<std::string> meanDistLabels;
+    for (int k=0; k<listMeanFiles.size(); k++) 
+    {
+        vtkSmartPointer<vtkPolyData> meanShape = vtkSmartPointer<vtkPolyData>::New();
+        meanShape = readVTKFile( listMeanFiles[k].c_str() );
+
+        if (meanShape->GetNumberOfPoints() != num_points)
+        {
+            std::cerr << "All the shapes must have the same number of points" << std::endl;
+            return EXIT_FAILURE;
+        } 
+        meanShapesList.push_back(meanShape);
+    }
+
+
     // **********
-	Filter->SetInput(inputSurface.c_str(), listMeanFiles);
+	Filter->SetInput(inputShape, meanShapesList);
 	Filter->Update();
     writeVTKFile(outputSurface.c_str(),Filter->GetOutput());
 

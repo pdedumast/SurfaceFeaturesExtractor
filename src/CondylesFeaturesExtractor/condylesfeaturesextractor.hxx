@@ -25,10 +25,10 @@ CondylesFeaturesExtractor::~CondylesFeaturesExtractor(){}
 /**
 * Function SetInput() for CondylesFeaturesExtractor
 */
-void CondylesFeaturesExtractor::SetInput(std::string input, std::vector<std::string> list)
+void CondylesFeaturesExtractor::SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list)
 {
-	this->listMeanFiles = list;
-	this->inputSurface = readVTKFile(input);
+	this->meanShapesList = list;
+	this->inputSurface = input;
 }
 
 /**
@@ -94,17 +94,20 @@ void CondylesFeaturesExtractor::compute_distances()
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
 	// Load each mean groupe shape & create labels
-	std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
 	std::vector<std::string> meanDistLabels;
-	for (int k=0; k<this->listMeanFiles.size(); k++) 
+	for (int k=0; k<this->meanShapesList.size(); k++) 
 	{
-		vtkSmartPointer<vtkPolyData> meanShape = vtkSmartPointer<vtkPolyData>::New();
-		meanShape = readVTKFile( this->listMeanFiles[k].c_str() );
-		meanShapesList.push_back(meanShape);
-
-		std::string k_char = static_cast<std::ostringstream*>( &( std::ostringstream() << k) )->str();
+		std::ostringstream k_temp;
+    	k_temp << k;
+    	std::string k_char = k_temp.str();
+		// std::string k_char = static_cast<std::ostringstream*>( &( std::ostringstream() << k) )->str();
 		meanDistLabels.push_back("distanceGroup"+k_char);
 	}
+	for (int k=0; k<this->meanShapesList.size(); k++) 
+	{
+		std::cout<<meanDistLabels[k]<<std::endl;
+	}
+
 	int trouve = 0;
 	for(int k=0; k<meanShapesList.size(); k++)
 	{
@@ -120,10 +123,6 @@ void CondylesFeaturesExtractor::compute_distances()
 			p2 = meanShapesList[k]->GetPoint(i);
 
 			double dist = sqrt( (p1[0]-p2[0])*(p1[0]-p2[0]) + (p1[1]-p2[1])*(p1[1]-p2[1]) + (p1[2]-p2[2])*(p1[2]-p2[2]) );
-			
-			if (i>=1002)	// 1002 = nb de vertices sur un min
-				dist = 0;			// a changeeer
-
 
 			meanDistance->InsertNextTuple1(dist);
 
@@ -202,7 +201,7 @@ void CondylesFeaturesExtractor::compute_shapeindex()			// S
 	}
 }
 
-void CondylesFeaturesExtractor::compute_curvedness()			// S
+void CondylesFeaturesExtractor::compute_curvedness()			// C
 {
 	// std::cout<<" :: Function compute_curvedness"<<std::endl;
 
@@ -229,6 +228,24 @@ void CondylesFeaturesExtractor::compute_curvedness()			// S
 	}
 
 }
+
+void CondylesFeaturesExtractor::scalar_indexPoint()
+{
+	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
+
+	vtkSmartPointer<vtkFloatArray> indexPointArray = vtkFloatArray::New() ;
+
+	indexPointArray->SetName("Index_Points");
+
+	for (int i=0; i<nbPoints; i++)
+	{
+		indexPointArray->InsertNextTuple1(i);
+
+		this->intermediateSurface->GetPointData()->SetActiveScalars("Index_Points");
+		this->intermediateSurface->GetPointData()->SetScalars(indexPointArray);
+	}
+}
+
 
 /**
  * Function Update()
@@ -258,6 +275,10 @@ void CondylesFeaturesExtractor::Update()
 	this->compute_shapeindex();
 
 	this->compute_curvedness();
+
+	// this->compute_color_maps();
+
+	this->scalar_indexPoint();
 
 	this->outputSurface = this->intermediateSurface;
 }

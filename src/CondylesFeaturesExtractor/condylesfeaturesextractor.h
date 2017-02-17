@@ -23,7 +23,7 @@ public:
     * @param input : input shape
     * @param list : list of group mean shapes
     */
-    void SetInput(std::string input, std::vector<std::string> list);
+    void SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list);
 
     /** Function Update()
      * Update the filter and process the output
@@ -42,7 +42,7 @@ private:
     vtkSmartPointer<vtkPolyData> outputSurface;
 
     vtkSmartPointer<vtkPolyData> intermediateSurface;
-    std::vector<std::string> listMeanFiles;
+    std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
 
     /** Function init_output()
      * Initialize outputSurface
@@ -72,10 +72,12 @@ private:
     void compute_gaussiancurvatures();
     void compute_meancurvatures();
 
+    /* Compute the shape index at each point */ 
     void compute_shapeindex();
+    /* Compute the curvedness at each point */ 
     void compute_curvedness();
-    
 
+    void scalar_indexPoint();
 
 
 protected:

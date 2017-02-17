@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Sampling</category>
+  <category>Shape Analysis</category>
   <title>Condyles Features Creator</title>
-  <description> xxx </description>
+  <description> Specific features are computed at each point of the 3D Model </description>
   <version>1.0</version>
-  <contributor>Priscille de Dumast (UofM)</contributor>
-  <acknowledgements> blablabla </acknowledgements>
+  <contributor>Priscille de Dumast (University of Michigan)</contributor>
+  <acknowledgements>  </acknowledgements>
     <parameters>
       <label>I/O</label>
 
