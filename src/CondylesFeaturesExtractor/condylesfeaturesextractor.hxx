@@ -1,5 +1,5 @@
 #include "condylesfeaturesextractor.h"
-
+#include <vtkDoubleArray.h>
 #if !defined(M_PI)
 #define M_PI 3.14159265358979323846264338327950288   /* pi */
 #endif
@@ -324,9 +324,9 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
 
 
 // ---------------------------------------Encode landmarks in  FCSV file--------------------------------------------------------------
-
-	vtkSmartPointer<vtkFloatArray> landmarksArray = vtkFloatArray::New() ;
+	vtkSmartPointer<vtkDoubleArray> landmarksArray = vtkSmartPointer<vtkDoubleArray>::New();
 	landmarksArray->SetName("Landmarks");
+	landmarksArray->SetNumberOfComponents(1);
 
 	for(int ID = 0; ID < this->intermediateSurface->GetNumberOfPoints(); ID++)
 	{
@@ -337,16 +337,13 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
 			if (diff == 0)
 			{
 				exists = i+1;
-				// std::cout << "Landmark ID " << exists << std::endl;
+				std::cout << "Landmark ID " << exists << std::endl;
 				break;
 			} 
 		}
-		// Array->InsertNextValue(exists);
-		landmarksArray->InsertNextTuple1(exists);
-
-		this->intermediateSurface->GetPointData()->SetActiveScalars("Landmarks");
-		this->intermediateSurface->GetPointData()->SetScalars(landmarksArray);
+	landmarksArray->InsertNextValue(exists);
 	}
+	this->intermediateSurface->GetPointData()->AddArray(landmarksArray);
 }
 
 
