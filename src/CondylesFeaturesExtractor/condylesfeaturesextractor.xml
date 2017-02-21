@@ -45,5 +45,22 @@
         <channel>input</channel>
         <description>List of mesh to compute distances</description>
       </geometry>
+
+      <boolean>
+        <name>landmarksOn</name>
+        <default>false</default>
+        <label>Get the landmarks from a fcsv file</label>
+        <longflag>landmarksOn</longflag>
+        <description>Get the landmarks from a fcsv file</description> 
+      </boolean>
+
+      <geometry fileExtensions=".fcsv" multiple="false">
+        <name>landmarks</name>
+        <label>fcsv files where are stored the landmarks</label>
+        <longflag>landmarks</longflag>
+        <channel>input</channel>
+        <description>fcsv files where are stored the landmarks</description>
+      </geometry>
+
     </parameters>
 </executable>

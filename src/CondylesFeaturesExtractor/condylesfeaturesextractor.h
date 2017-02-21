@@ -7,6 +7,7 @@
 #include <vtkPointData.h>
 #include <vtkFloatArray.h>
 #include <vtkCurvatures.h>
+#include <vtkPointLocator.h>
 
 #include "condylesfileIO.h"
 
@@ -23,7 +24,7 @@ public:
     * @param input : input shape
     * @param list : list of group mean shapes
     */
-    void SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list);
+    void SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list, std::vector<std::string> landmarkFile);
 
     /** Function Update()
      * Update the filter and process the output
@@ -43,7 +44,7 @@ private:
 
     vtkSmartPointer<vtkPolyData> intermediateSurface;
     std::vector< vtkSmartPointer<vtkPolyData> > meanShapesList;
-
+    std::vector<std::string> landmarkFile;
     /** Function init_output()
      * Initialize outputSurface
      */
@@ -78,6 +79,8 @@ private:
     void compute_curvedness();
 
     void scalar_indexPoint();
+
+    void store_landmarks_vtk();
 
 
 protected:

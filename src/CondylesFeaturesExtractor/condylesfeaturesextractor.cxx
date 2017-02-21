@@ -31,9 +31,13 @@ int main (int argc, char *argv[])
         }
     }
 
+    std::vector< std::string> landmarkFile;
+    if ( landmarksOn )
+        landmarkFile.push_back(landmarks);
+
     // **********
     vtkSmartPointer<CondylesFeaturesExtractor> Filter = vtkSmartPointer<CondylesFeaturesExtractor>::New();
-	Filter->SetInput(inputShape, distMeshList);
+	Filter->SetInput(inputShape, distMeshList, landmarkFile);
 	Filter->Update();
     writeVTKFile(outputMesh.c_str(),Filter->GetOutput());
 

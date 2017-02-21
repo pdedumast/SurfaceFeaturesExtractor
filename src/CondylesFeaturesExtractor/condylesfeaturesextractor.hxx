@@ -25,10 +25,11 @@ CondylesFeaturesExtractor::~CondylesFeaturesExtractor(){}
 /**
 * Function SetInput() for CondylesFeaturesExtractor
 */
-void CondylesFeaturesExtractor::SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list)
+void CondylesFeaturesExtractor::SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list, std::vector<std::string> landmarkFile)
 {
 	this->meanShapesList = list;
 	this->inputSurface = input;
+	this->landmarkFile = landmarkFile;
 }
 
 /**
@@ -108,7 +109,6 @@ void CondylesFeaturesExtractor::compute_distances()
 		std::cout<<meanDistLabels[k]<<std::endl;
 	}
 
-	int trouve = 0;
 	for(int k=0; k<meanShapesList.size(); k++)
 	{
 		vtkSmartPointer<vtkFloatArray> meanDistance = vtkFloatArray::New() ;
@@ -246,6 +246,109 @@ void CondylesFeaturesExtractor::scalar_indexPoint()
 	}
 }
 
+void CondylesFeaturesExtractor::store_landmarks_vtk()
+{
+	std::cout << " Functions store landmarks_vtk " << std::endl;
+
+	// Build a locator
+	vtkPointLocator *pointLocator = vtkPointLocator::New();
+	pointLocator->SetDataSet(this->intermediateSurface);
+	pointLocator->BuildLocator();
+
+
+// ---------------------------------------Reading FCSV file--------------------------------------------------------------
+
+	#define NB_LINES 250
+	#define NB_WORDS 250
+
+	// Get the Surface filename from the command line
+	std::fstream fcsvfile(this->landmarkFile[0].c_str());
+	std::string line, mot;
+	std::string words[NB_LINES][NB_WORDS]; // !!!! WARNING DEFINE AND TO PROTECT IF SUPERIOR TO 20
+	int i,j;
+	int* landmarkPids; 
+	int NbLandmarks;
+
+	if(fcsvfile)
+	{
+		getline(fcsvfile, line);
+		fcsvfile>>mot;
+		while(mot=="#")
+		{
+			if(getline(fcsvfile, line))
+				fcsvfile>>mot;
+			else
+				mot="#";
+		}
+
+		i=0;
+		do
+		{
+			std::size_t pos_end, pos1;
+			j=0;
+			do
+			{
+				std::size_t pos0 = 0;
+				pos1 = mot.find(',');
+				pos_end = mot.find(",,");
+				words[i][j] = mot.substr(pos0, pos1-pos0);
+				mot = mot.substr(pos1+1);
+				j++;
+			}
+			while(pos1+1<pos_end);
+			i++;
+		}
+		while(fcsvfile>>mot);
+
+		NbLandmarks = i;
+		landmarkPids = new int[NbLandmarks]; 
+
+		for (int i = 0; i < NbLandmarks; ++i)
+		{
+			double x = atof(words[i][1].c_str());
+			double y = atof(words[i][2].c_str());
+			double z = atof(words[i][3].c_str());
+                        
+            // Find closest point
+            vtkIdType ptId;
+            double p[] = {0.0, 0.0, 0.0};
+            p[0] = x; p[1] = y; p[2] = z;
+            ptId = pointLocator->FindClosestPoint(p);
+            landmarkPids[i] = ptId;
+
+// std::cout << "landmark " << i << " position " << x << "," << y << "," << z << " and the corresponding Pid is " << landmarkPids[i] << std::endl;
+		}
+	}
+	else
+		std::cout<<"Error !";
+
+
+// ---------------------------------------Encode landmarks in  FCSV file--------------------------------------------------------------
+
+	vtkSmartPointer<vtkFloatArray> landmarksArray = vtkFloatArray::New() ;
+	landmarksArray->SetName("Landmarks");
+
+	for(int ID = 0; ID < this->intermediateSurface->GetNumberOfPoints(); ID++)
+	{
+		double exists = 0.0;
+		for (int i = 0; i < NbLandmarks; ++i)
+		{
+			double diff = landmarkPids[i] - ID;
+			if (diff == 0)
+			{
+				exists = i+1;
+				// std::cout << "Landmark ID " << exists << std::endl;
+				break;
+			} 
+		}
+		// Array->InsertNextValue(exists);
+		landmarksArray->InsertNextTuple1(exists);
+
+		this->intermediateSurface->GetPointData()->SetActiveScalars("Landmarks");
+		this->intermediateSurface->GetPointData()->SetScalars(landmarksArray);
+	}
+}
+
 
 /**
  * Function Update()
@@ -261,7 +364,8 @@ void CondylesFeaturesExtractor::Update()
 	this->compute_positions();
 
 	// Compute distance to each mean groups
-	this->compute_distances();
+	if (this->meanShapesList.size() > 0)
+		this->compute_distances();
 
 	// Compute curvatures at each point
 	this->compute_maxcurvatures();
@@ -279,6 +383,9 @@ void CondylesFeaturesExtractor::Update()
 	// this->compute_color_maps();
 
 	this->scalar_indexPoint();
+
+	if (this->landmarkFile.size() == 1)
+		this->store_landmarks_vtk();
 
 	this->outputSurface = this->intermediateSurface;
 }
