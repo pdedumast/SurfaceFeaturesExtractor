@@ -316,7 +316,7 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
             ptId = pointLocator->FindClosestPoint(p);
             landmarkPids[i] = ptId;
 
-// std::cout << "landmark " << i << " position " << x << "," << y << "," << z << " and the corresponding Pid is " << landmarkPids[i] << std::endl;
+		// std::cout << "landmark " << i << " position " << x << "," << y << "," << z << " and the corresponding Pid is " << landmarkPids[i] << std::endl;
 		}
 	}
 	else
@@ -341,9 +341,11 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
 				break;
 			} 
 		}
-	landmarksArray->InsertNextValue(exists);
+		landmarksArray->InsertNextValue(exists);
 	}
+	landmarksArray->Resize(this->intermediateSurface->GetNumberOfPoints());
 	this->intermediateSurface->GetPointData()->AddArray(landmarksArray);
+
 }
 
 
