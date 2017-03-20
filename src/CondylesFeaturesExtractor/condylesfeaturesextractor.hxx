@@ -192,7 +192,7 @@ void CondylesFeaturesExtractor::compute_shapeindex()			// S
 		double k1 = minCurvArray->GetTuple1(i);
 		double k2 = maxCurvArray->GetTuple1(i);
 		
-		double value = sqrt( (pow(k1, 2) + pow(k2, 2) ) / 2);
+		double value = (2 / M_PI) * (atan( (k2 + k1) / (k2 - k1) ) );
 
 		shapeIndexArray->InsertNextTuple1(value);
 
@@ -219,7 +219,7 @@ void CondylesFeaturesExtractor::compute_curvedness()			// C
 		double k1 = minCurvArray->GetTuple1(i);
 		double k2 = maxCurvArray->GetTuple1(i);
 		
-		double value = (2 / M_PI) * (atan( (k2 + k1) / (k2 - k1) ) );
+		double value = sqrt( (pow(k1, 2) + pow(k2, 2) ) / 2);
 
 		curvednessArray->InsertNextTuple1(value);
 
@@ -256,7 +256,7 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
 	pointLocator->BuildLocator();
 
 
-// ---------------------------------------Reading FCSV file--------------------------------------------------------------
+	// ---------- Reading FCSV file ----------
 
 	#define NB_LINES 250
 	#define NB_WORDS 250
@@ -323,7 +323,7 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
 		std::cout<<"Error !";
 
 
-// ---------------------------------------Encode landmarks in  FCSV file--------------------------------------------------------------
+	// ---------- Encode landmarks in  FCSV file ----------
 	vtkSmartPointer<vtkDoubleArray> landmarksArray = vtkSmartPointer<vtkDoubleArray>::New();
 	landmarksArray->SetName("Landmarks");
 	landmarksArray->SetNumberOfComponents(1);
@@ -368,20 +368,15 @@ void CondylesFeaturesExtractor::Update()
 
 	// Compute curvatures at each point
 	this->compute_maxcurvatures();
-
 	this->compute_mincurvatures();
-
 	this->compute_gaussiancurvatures();
-
 	this->compute_meancurvatures();
-	
-	this->compute_shapeindex();
 
-	this->compute_curvedness();
+	// Commented because NaN values	
+	// this->compute_shapeindex();
+	// this->compute_curvedness();
 
-	// this->compute_color_maps();
-
-	this->scalar_indexPoint();
+	// this->scalar_indexPoint();
 
 	if (this->landmarkFile.size() == 1)
 		this->store_landmarks_vtk();
