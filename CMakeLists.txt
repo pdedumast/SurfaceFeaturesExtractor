@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-PROJECT(CondylesFeaturesCreator)
+PROJECT(SurfaceFeaturesExtractor)
 
 #Find VTK Package
 find_package(VTK REQUIRED)

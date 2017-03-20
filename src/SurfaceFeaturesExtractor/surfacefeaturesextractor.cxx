@@ -1,6 +1,6 @@
-#include "condylesfeaturesextractor.hxx"
-#include "condylesfileIO.hxx"
-#include "condylesfeaturesextractorCLP.h"
+#include "surfacefeaturesextractor.hxx"
+#include "fileIO.hxx"
+#include "surfacefeaturesextractorCLP.h"
 
 #include <dirent.h>
 #include <iterator>
@@ -36,7 +36,7 @@ int main (int argc, char *argv[])
         landmarkFile.push_back(landmarks);
 
     // **********
-    vtkSmartPointer<CondylesFeaturesExtractor> Filter = vtkSmartPointer<CondylesFeaturesExtractor>::New();
+    vtkSmartPointer<SurfaceFeaturesExtractor> Filter = vtkSmartPointer<SurfaceFeaturesExtractor>::New();
 	Filter->SetInput(inputShape, distMeshList, landmarkFile);
 	Filter->Update();
     writeVTKFile(outputMesh.c_str(),Filter->GetOutput());

@@ -1,16 +1,16 @@
-#include "condylesfeaturesextractor.h"
+#include "surfacefeaturesextractor.h"
 #include <vtkDoubleArray.h>
 #if !defined(M_PI)
 #define M_PI 3.14159265358979323846264338327950288   /* pi */
 #endif
 
 
-vtkStandardNewMacro(CondylesFeaturesExtractor);
+vtkStandardNewMacro(SurfaceFeaturesExtractor);
 
 /**
-* Constructor CondylesFeaturesExtractor()
+* Constructor SurfaceFeaturesExtractor()
 */
-CondylesFeaturesExtractor::CondylesFeaturesExtractor(){
+SurfaceFeaturesExtractor::SurfaceFeaturesExtractor(){
 	this->inputSurface = vtkSmartPointer<vtkPolyData>::New();
 	this->outputSurface = vtkSmartPointer<vtkPolyData>::New();
 
@@ -18,14 +18,14 @@ CondylesFeaturesExtractor::CondylesFeaturesExtractor(){
 }
 
 /**
-* Destructor CondylesFeaturesExtractor()
+* Destructor SurfaceFeaturesExtractor()
 */
-CondylesFeaturesExtractor::~CondylesFeaturesExtractor(){}
+SurfaceFeaturesExtractor::~SurfaceFeaturesExtractor(){}
 
 /**
-* Function SetInput() for CondylesFeaturesExtractor
+* Function SetInput() for SurfaceFeaturesExtractor
 */
-void CondylesFeaturesExtractor::SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list, std::vector<std::string> landmarkFile)
+void SurfaceFeaturesExtractor::SetInput(vtkSmartPointer<vtkPolyData> input, std::vector< vtkSmartPointer<vtkPolyData> > list, std::vector<std::string> landmarkFile)
 {
 	this->meanShapesList = list;
 	this->inputSurface = input;
@@ -33,9 +33,9 @@ void CondylesFeaturesExtractor::SetInput(vtkSmartPointer<vtkPolyData> input, std
 }
 
 /**
- * Function init_output() for CondylesFeaturesExtractor
+ * Function init_output() for SurfaceFeaturesExtractor
  */
-void CondylesFeaturesExtractor::init_output()
+void SurfaceFeaturesExtractor::init_output()
 {
 	this->intermediateSurface = this->inputSurface;
 	this->outputSurface = this->inputSurface;
@@ -44,7 +44,7 @@ void CondylesFeaturesExtractor::init_output()
 /** 
  * Function compute_normals()
  */
-void CondylesFeaturesExtractor::compute_normals()
+void SurfaceFeaturesExtractor::compute_normals()
 {
 	// puts(" :: Function compute_normals");
 	vtkSmartPointer<vtkPolyDataNormals> NormalFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -65,7 +65,7 @@ void CondylesFeaturesExtractor::compute_normals()
 /** 
  * Function compute_positions()
  */
-void CondylesFeaturesExtractor::compute_positions()
+void SurfaceFeaturesExtractor::compute_positions()
 {
     std::string name = "Position";
     int nbPoints = this->intermediateSurface->GetNumberOfPoints();
@@ -90,7 +90,7 @@ void CondylesFeaturesExtractor::compute_positions()
 /** 
  * Function compute_distances()
  */
-void CondylesFeaturesExtractor::compute_distances()
+void SurfaceFeaturesExtractor::compute_distances()
 {
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
@@ -133,7 +133,7 @@ void CondylesFeaturesExtractor::compute_distances()
 }
 
 
-void CondylesFeaturesExtractor::compute_maxcurvatures()		// Kappa2
+void SurfaceFeaturesExtractor::compute_maxcurvatures()		// Kappa2
 {
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -143,7 +143,7 @@ void CondylesFeaturesExtractor::compute_maxcurvatures()		// Kappa2
 
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
-void CondylesFeaturesExtractor::compute_mincurvatures()		// Kappa1
+void SurfaceFeaturesExtractor::compute_mincurvatures()		// Kappa1
 {
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -153,7 +153,7 @@ void CondylesFeaturesExtractor::compute_mincurvatures()		// Kappa1
 
 	this->intermediateSurface = curvaturesFilter->GetOutput();	
 }
-void CondylesFeaturesExtractor::compute_gaussiancurvatures()	// G
+void SurfaceFeaturesExtractor::compute_gaussiancurvatures()	// G
 {
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -163,7 +163,7 @@ void CondylesFeaturesExtractor::compute_gaussiancurvatures()	// G
 
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
-void CondylesFeaturesExtractor::compute_meancurvatures()		// H
+void SurfaceFeaturesExtractor::compute_meancurvatures()		// H
 {
 	vtkSmartPointer<vtkCurvatures> curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
 
@@ -174,7 +174,7 @@ void CondylesFeaturesExtractor::compute_meancurvatures()		// H
 	this->intermediateSurface = curvaturesFilter->GetOutput();
 }
 
-void CondylesFeaturesExtractor::compute_shapeindex()			// S
+void SurfaceFeaturesExtractor::compute_shapeindex()			// S
 {
 	// std::cout<<" :: Function compute_shapeindex"<<std::endl;
 
@@ -203,7 +203,7 @@ void CondylesFeaturesExtractor::compute_shapeindex()			// S
 	}
 }
 
-void CondylesFeaturesExtractor::compute_curvedness()			// C
+void SurfaceFeaturesExtractor::compute_curvedness()			// C
 {
 	// std::cout<<" :: Function compute_curvedness"<<std::endl;
 
@@ -231,7 +231,7 @@ void CondylesFeaturesExtractor::compute_curvedness()			// C
 
 }
 
-void CondylesFeaturesExtractor::scalar_indexPoint()
+void SurfaceFeaturesExtractor::scalar_indexPoint()
 {
 	int nbPoints = this->intermediateSurface->GetNumberOfPoints();
 
@@ -248,7 +248,7 @@ void CondylesFeaturesExtractor::scalar_indexPoint()
 	}
 }
 
-void CondylesFeaturesExtractor::store_landmarks_vtk()
+void SurfaceFeaturesExtractor::store_landmarks_vtk()
 {
 	std::cout << " Functions store landmarks_vtk " << std::endl;
 
@@ -354,7 +354,7 @@ void CondylesFeaturesExtractor::store_landmarks_vtk()
 /**
  * Function Update()
  */
-void CondylesFeaturesExtractor::Update()
+void SurfaceFeaturesExtractor::Update()
 {
 	this->init_output();
 
@@ -390,7 +390,7 @@ void CondylesFeaturesExtractor::Update()
 /**
  * Function GetOutput()
  */
-vtkSmartPointer<vtkPolyData> CondylesFeaturesExtractor::GetOutput()
+vtkSmartPointer<vtkPolyData> SurfaceFeaturesExtractor::GetOutput()
 {
 	return this->outputSurface;
 }

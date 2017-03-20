@@ -1,4 +1,4 @@
-# Condyles Features Extractor
+# Surface Features Extractor
 
 ## Description
 
@@ -24,7 +24,7 @@ Optional features:
 
 #### Requirements 
 
-Building CondylesFeaturesExtractor requires to have built previously:
+Building SurfaceFeaturesExtractor requires to have built previously:
 
 * VTK version 7
 * ITK 
@@ -35,19 +35,19 @@ Building CondylesFeaturesExtractor requires to have built previously:
 
 Consider this tree of repertories:
 ```
-~/Project/CondylesFeaturesExtractor
-         /CondylesFeaturesExtractor-build
+~/Project/SurfaceFeaturesExtractor
+         /SurfaceFeaturesExtractor-build
 ```
 
 Start a terminal.
-First change your current working directory to the build directory ```CondylesFeaturesExtractor-build```
+First change your current working directory to the build directory ```SurfaceFeaturesExtractor-build```
 ```
-cd ~/Project/CondylesFeaturesExtractor-build
+cd ~/Project/SurfaceFeaturesExtractor-build
 ```
 
 Generate the project using ```cmake```
 ```
-cmake -DVTK_DIR:PATH=path/to/VTK -DITK_DIR:PATH=path/to/ITK -DSlicerExecutionModel:PATH=path/to/SlicerExecutionModel ../CondylesFeaturesExtractor
+cmake -DVTK_DIR:PATH=path/to/VTK -DITK_DIR:PATH=path/to/ITK -DSlicerExecutionModel:PATH=path/to/SlicerExecutionModel ../SurfaceFeaturesExtractor
 make
 ```
 
@@ -55,7 +55,7 @@ make
 ## Usage
 
 ```
-./condylesfeaturesextractor inputModel outputModel 
+./surfacefeaturesextractor inputModel outputModel 
 [options: 
 --distMeshOn --distMesh [<std::vector<std::string>> list of vtk files]
 --landmarksOn --landmarks [<std::string> fcsv file] ]

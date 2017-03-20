@@ -1,5 +1,5 @@
-#ifndef CONDYLESFEATURESEXTRACTOR_H
-#define CONDYLESFEATURESEXTRACTOR_H
+#ifndef SURFACEFEATURESEXTRACTOR_H
+#define SURFACEFEATURESEXTRACTOR_H
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataAlgorithm.h>
@@ -9,15 +9,15 @@
 #include <vtkCurvatures.h>
 #include <vtkPointLocator.h>
 
-#include "condylesfileIO.h"
+#include "fileIO.h"
 
 
-class CondylesFeaturesExtractor : public vtkPolyDataAlgorithm
+class SurfaceFeaturesExtractor : public vtkPolyDataAlgorithm
 {
 public:
     /** Conventions for a VTK Class*/
-    vtkTypeMacro(CondylesFeaturesExtractor,vtkPolyDataAlgorithm);
-    static CondylesFeaturesExtractor *New(); 
+    vtkTypeMacro(SurfaceFeaturesExtractor,vtkPolyDataAlgorithm);
+    static SurfaceFeaturesExtractor *New(); 
 
     /** Function SetInput(std::string input, std::vector<std::string> list)
     * Set the inputs data of the filter
@@ -33,7 +33,7 @@ public:
 
     /**
      * Return the output of the Filter
-     * @return : output of the Filter CondylesFeaturesExtractor
+     * @return : output of the Filter SurfaceFeaturesExtractor
      */
     vtkSmartPointer<vtkPolyData> GetOutput();
 
@@ -85,9 +85,9 @@ private:
 
 protected:
     /** Constructor & Destructor */
-    CondylesFeaturesExtractor();
-    ~CondylesFeaturesExtractor();
+    SurfaceFeaturesExtractor();
+    ~SurfaceFeaturesExtractor();
 
 };
 
-#endif // CONDYLESFEATURESEXTRACTOR_H
+#endif // SurfaceFeaturesExtractor_H

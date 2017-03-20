@@ -1,4 +1,4 @@
 
 
-add_subdirectory(CondylesFeaturesExtractor)
+add_subdirectory(SurfaceFeaturesExtractor)
 add_subdirectory(ComputeMeanShapes)
