@@ -12,6 +12,8 @@ Default features:
   * Minimum curvature (1 scalar)
   * Gaussian curvature (1 scalar)
   * Mean curvature (1 scalar)
+  * Shape Index (1 scalar)
+  * Curvedness (1 scalar)
 
 Optional features:
 

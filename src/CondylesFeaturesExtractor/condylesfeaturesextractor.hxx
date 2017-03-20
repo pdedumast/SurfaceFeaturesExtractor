@@ -193,6 +193,8 @@ void CondylesFeaturesExtractor::compute_shapeindex()			// S
 		double k2 = maxCurvArray->GetTuple1(i);
 		
 		double value = (2 / M_PI) * (atan( (k2 + k1) / (k2 - k1) ) );
+		if( value != value )
+        	value = 0;
 
 		shapeIndexArray->InsertNextTuple1(value);
 
@@ -372,9 +374,10 @@ void CondylesFeaturesExtractor::Update()
 	this->compute_gaussiancurvatures();
 	this->compute_meancurvatures();
 
-	// Commented because NaN values	
-	// this->compute_shapeindex();
-	// this->compute_curvedness();
+	// Shape Index and Curvedness
+	this->compute_shapeindex();
+	this->compute_curvedness();
+	
 
 	// this->scalar_indexPoint();
 
