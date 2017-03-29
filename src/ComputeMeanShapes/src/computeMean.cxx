@@ -26,8 +26,10 @@ int main(int argc, char** argv)
     // Check input dir & Get shapes list
     std::vector<std::string> listShapes;
     // if (!inputDir.empty())
-    //     getListFile(inputDir, listShapes, "vtk");
-    listShapes = inputList;   
+    // getListFile(inputDir, listShapes, "vtk");
+    listShapes = inputList;  
+    for (int i = 0; i< inputList.size(); i ++)
+        std::cout<<inputList[i]<<std::endl;
         
     // Check output file
     if(outputSurface.rfind(".vtk")==std::string::npos || outputSurface.empty())
