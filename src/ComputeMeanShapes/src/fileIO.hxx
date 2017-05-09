@@ -51,11 +51,11 @@ void writeVTKFile (std::string filename, vtkSmartPointer<vtkPolyData> output)
 
         fiberWriter->SetFileName(filename.c_str());
 
-		#if (VTK_MAJOR_VERSION < 6)
-            fiberWriter->SetInput(output);
-		#else
+		// #if (VTK_MAJOR_VERSION < 6)
+            // fiberWriter->SetInput(output);
+		// #else
             fiberWriter->SetInputData(output);
-		#endif
+		// #endif
             fiberWriter->Update();
     }
 	        // XML
@@ -64,11 +64,11 @@ void writeVTKFile (std::string filename, vtkSmartPointer<vtkPolyData> output)
         // std::cout<<"---Writting VTP output File to "<<filename.c_str()<<std::endl;
     	vtkSmartPointer<vtkXMLPolyDataWriter> fiberWriter = vtkXMLPolyDataWriter::New();
     	fiberWriter->SetFileName(filename.c_str());
-		#if (VTK_MAJOR_VERSION < 6)
-        	fiberWriter->SetInput(output);
-		#else
+		// #if (VTK_MAJOR_VERSION < 6)
+        	// fiberWriter->SetInput(output);
+		// #else
         	fiberWriter->SetInputData(output);
-		#endif
+		// #endif
         	fiberWriter->Update();
     }
     else
