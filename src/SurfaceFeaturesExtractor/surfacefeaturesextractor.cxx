@@ -2,7 +2,6 @@
 #include "fileIO.hxx"
 #include "surfacefeaturesextractorCLP.h"
 
-#include <dirent.h>
 #include <iterator>
 
 
@@ -35,7 +34,6 @@ int main (int argc, char *argv[])
     if ( landmarksOn )
         landmarkFile.push_back(landmarks);
 
-    // **********
     vtkSmartPointer<SurfaceFeaturesExtractor> Filter = vtkSmartPointer<SurfaceFeaturesExtractor>::New();
 	Filter->SetInput(inputShape, distMeshList, landmarkFile);
 	Filter->Update();

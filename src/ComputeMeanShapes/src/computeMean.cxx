@@ -4,9 +4,12 @@
 #include "computeMean.hxx"
 #include "fileIO.hxx"
 
-#include <dirent.h>
 #include <iterator>
+#include <dirent.h>
 
+#ifndef WIN32
+    #include <sys/types.h>
+#endif
 
 // Declaration of getListFile()
 void getListFile(std::string path, std::vector<std::string> &list, const std::string &suffix);
@@ -25,8 +28,6 @@ int main(int argc, char** argv)
 
     // Check input dir & Get shapes list
     std::vector<std::string> listShapes;
-    // if (!inputDir.empty())
-    // getListFile(inputDir, listShapes, "vtk");
     listShapes = inputList;  
     for (int i = 0; i< inputList.size(); i ++)
         std::cout<<inputList[i]<<std::endl;
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
     }
 
     int groupNumber = 0;
-    // **********
+
     Filter->SetInput(listShapes, groupNumber);
     Filter->Update();
     writeVTKFile(outputSurface.c_str(),Filter->GetOutput());
@@ -53,7 +54,6 @@ int main(int argc, char** argv)
  * @param list : list of group mean shape
  * @param suffix : files extension
  */
-
 void getListFile(std::string path, std::vector<std::string> &list, const std::string &suffix)
 {
     DIR *dir = opendir(path.c_str());
@@ -71,23 +71,3 @@ void getListFile(std::string path, std::vector<std::string> &list, const std::st
 }
 
 
-
-
-
-// bool DirectoryExists( const char* pzPath )
-// {
-//     if ( pzPath == NULL) return false;
-
-//     DIR *pDir;
-//     bool bExists = false;
-
-//     pDir = opendir (pzPath);
-
-//     if (pDir != NULL)
-//     {
-//         bExists = true;    
-//         (void) closedir (pDir);
-//     }
-
-//     return bExists;
-// }
